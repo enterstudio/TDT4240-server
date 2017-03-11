@@ -2,6 +2,8 @@
 
 var express = require('express');
 var app = express();
+var bodyParser = require('body-parser');
+app.use(bodyParser.json());
 // Repository for the application
 var repository = require('./repository/repository.js');
 // Routes for the application
