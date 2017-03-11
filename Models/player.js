@@ -3,29 +3,29 @@
 class Player {
 
   constructor(name, score){
-    this._name = name;
-    this._score = score;
-    this._id = id;
+    this.name = name;
+    this.score = score;
+    this.id = null;
   }
 
   getID(){
-    return this._id;
+    return this.id;
   }
 
   setScore(score){
-    this._score = score;
+    this.score = score;
   }
 
   getScore(){
-    return this._score;
+    return this.score;
   }
 
   setName(name){
-    this._name = name;
+    this.name = name;
   }
 
   getName(name){
-    return this._name;
+    return this.name;
   }
 
 }

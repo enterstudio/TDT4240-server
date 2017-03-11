@@ -6,6 +6,7 @@ class Game {
 
   constructor(cb){
     this.createGame(cb);
+    this.players = []
   }
 
   createGame(cb){
@@ -18,20 +19,21 @@ class Game {
   }
 
   getGamePin(){
-    return this._gamePin;
+    return this.gamePin;
   }
 
   setGamePin(gamePin){
-    this._gamePin = gamePin;
+    this.gamePin = gamePin;
   }
 
   addPlayer(player){
-    this._players.push(player);
+    this.players.push(player);
+    // Save to database
   }
 
   removePlayer(player){
-    var index = this._players.indexOf(player);
-    if (index != -1) this._players.splice(index, 1);
+    var index = this.players.indexOf(player);
+    if (index != -1) this.players.splice(index, 1);
   }
 
 }
