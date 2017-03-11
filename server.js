@@ -3,11 +3,12 @@
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
+var multer = require('multer');
 app.use(bodyParser.json());
 // Repository for the application
 var repository = require('./repository/repository.js');
 // Routes for the application
-app.use(require('./routes/gameRoute'))
+app.use(require('./routes/routes'))
 
 class Server {
 

@@ -7,6 +7,8 @@ class Game {
   constructor(cb){
     this.createGame(cb);
     this.players = []
+    this.guesses = []
+    /* guess { word, bitmapId } */
   }
 
   createGame(cb){
