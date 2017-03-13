@@ -1,7 +1,11 @@
 class DrawHandler {
 
-  post(){
-    
+  static setGames(games){
+    DrawHandler.games = games;
+  }
+
+  static post(req, res){
+
   }
 
 }

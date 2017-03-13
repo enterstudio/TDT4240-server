@@ -9,13 +9,13 @@ const Player = require('./../Models/Player');
 const GameHandler = require('./GameHandler');
 const DrawHandler = require('./DrawHandler');
 const PlayerHandler = require('./PlayerHandler');
+const GuessHandler = require('./GuessHandler');
 const games = {};
 
 GameHandler.setGames(games);
-PlayerHandler.setGames(games);
 GuessHandler.setGames(games);
 DrawHandler.setGames(games);
-
+PlayerHandler.setGames(games);
 /*
   POST : http://localhost:8000/game       - Create game
   POST : http://localhost:8000/game/:id   - Join game
@@ -37,6 +37,6 @@ router.post(urls.player, PlayerHandler.post);
 router.get(urls.guess, GuessHandler.get);
 router.post(urls.guess, GuessHandler.post);
 
-router.post(urls.drawing, upload.single('img') ,DrawHandler.post);
+router.post(urls.drawing, upload.single('img'), DrawHandler.post);
 
 module.exports = router;

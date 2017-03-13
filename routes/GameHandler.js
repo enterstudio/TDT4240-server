@@ -13,10 +13,9 @@ class GameHandler {
       res.send(game);
     }
     else{
-      res.status(404).send("Not found")
+      res.status(404).send("Not found");
     }
   }
-
 
   static post(req, res){
     var game = new Game(function(gamePin){
@@ -24,6 +23,7 @@ class GameHandler {
       games[gamePin] = game;
     });
   }
+
 }
 
 module.exports = GameHandler
