@@ -2,7 +2,7 @@
 
 const express = require('express')
 const router = express.Router()
-const upload = require('multer')({ dest:'../drawings/' })
+// const upload = require('multer')({ dest:'../drawings/' })
 
 const Game = require('./../Models/Game')
 const Player = require('./../Models/Player');
@@ -37,6 +37,6 @@ router.post(urls.player, PlayerHandler.post);
 router.get(urls.guess, GuessHandler.get);
 router.post(urls.guess, GuessHandler.post);
 
-router.post(urls.drawing, upload.single('img'), DrawHandler.post);
+router.post(urls.drawing, DrawHandler.post);
 
 module.exports = router;
