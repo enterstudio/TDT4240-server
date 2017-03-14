@@ -1,3 +1,5 @@
+'use strict'
+
 class GuessHandler {
 
   static setGames(games){
@@ -5,7 +7,7 @@ class GuessHandler {
   }
 
 
-  get(req, res){
+  static get(req, res){
     const gamePin = req.body.gamePin
     const game = GuessHandler.games[gamePin]
     if(!game){
@@ -16,7 +18,7 @@ class GuessHandler {
   }
 
 
-  post(req, res){
+  static post(req, res){
     const gamePin = req.body.gamePin
     const game = GuessHandler.games[gamePin]
     if(!game){
@@ -28,3 +30,5 @@ class GuessHandler {
   }
 
 }
+
+module.exports = GuessHandler;

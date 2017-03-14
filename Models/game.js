@@ -8,6 +8,7 @@ class Game {
     this.createGame(cb);
     this.players = []
     this.guesses = []
+    this.isStarted = false;
     /* guess { word, bitmapId } */
   }
 

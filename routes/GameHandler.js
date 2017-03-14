@@ -1,4 +1,5 @@
 'use strict';
+const Game = require('../Models/game')
 
 class GameHandler {
 
@@ -6,8 +7,9 @@ class GameHandler {
     GameHandler.games = games;
   }
 
+
   static get(req, res){
-    const game = games[req.params.gamePin];
+    const game = GameHandler.games[req.params.gamePin];
 
     if(game){
       res.send(game);
@@ -19,9 +21,11 @@ class GameHandler {
 
 
   static post(req, res){
-    var game = new Game(function(gamePin){
-      res.end(JSON.stringify({ gamePin: gamePin }));
-      games[gamePin] = game;
+      var game = new Game( function(gamePin)
+      {
+        res.send(JSON.stringify({ gamePin: gamePin
+      }));
+      GameHandler.games[gamePin] = game;
     });
   }
 }
