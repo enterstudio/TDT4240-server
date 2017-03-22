@@ -16,6 +16,7 @@ class GuessHandler {
   }
 
 
+  /*
   static post(req, res){
     const gamePin = req.body.gamePin
     const game = GuessHandler.games[gamePin]
@@ -24,7 +25,14 @@ class GuessHandler {
     }
 
     game.addGuess(req.body.guess);
-    res.send("Ok");
+    res.send("Ok " + req.body.guess);
+  }
+  */
+  static post(req, res){
+    res.status(201);
+    res.end(JSON.stringify({ status: "success" }));
+    console.log(req.body.guess);
+
   }
 
 }
