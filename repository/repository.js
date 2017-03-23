@@ -11,9 +11,9 @@ class Repository {
       console.log('Creating database...');
 
       // Game table
-      db.run("CREATE TABLE IF NOT EXISTS game (gamePin INTEGER PRIMARY KEY)");
+      db.run("CREATE TABLE IF NOT EXISTS game (gamePin INTEGER PRIMARY KEY, players TEXT, guesses TEXT)");
       db.run("DELETE FROM game");
-      db.run("INSERT INTO game (gamePin) VALUES (?)", 1);
+      //db.run("INSERT INTO game (gamePin) VALUES (?)", 1);
 
       // Player
       db.run("CREATE TABLE IF NOT EXISTS player (id INTEGER PRIMARY KEY, name VARCHAR, score INTEGER, gamePin INTEGER)");

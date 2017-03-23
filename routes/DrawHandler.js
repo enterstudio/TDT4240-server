@@ -2,7 +2,7 @@ const DrawRepository = require('../repository/drawRepository');
 
 class DrawHandler {
 
-  static setGames(games){
+  static _setGames(games){
     DrawHandler.games = games;
   }
 
@@ -17,7 +17,10 @@ class DrawHandler {
     });
 
   	res.send(JSON.stringify({ status: "success" }));
+  }
 
+  static get(req, res){
+    
   }
 
 }

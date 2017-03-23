@@ -2,14 +2,18 @@
 
 class GuessHandler {
 
-  static setGames(games){
+  static _setGames(games){
     GuessHandler.games = games;
   }
 
 
+  static _getGame(request){
+    return GuessHandler.games[request.params.id];
+  }
+
+
   static get(req, res){
-    const gamePin = req.body.gamePin
-    const game = GuessHandler.games[gamePin]
+    const game = GuessHandler._getGame(req)
     if(!game){
       res.status(404).send("Game does not exist");
     }
@@ -18,23 +22,19 @@ class GuessHandler {
   }
 
 
-  /*
   static post(req, res){
-    const gamePin = req.body.gamePin
-    const game = GuessHandler.games[gamePin]
+    const game = GuessHandler._getGame(req);
     if(!game){
       res.status(404).send("Game does not exist");
     }
 
-    game.addGuess(req.body.guess);
-    res.send("Ok " + req.body.guess);
-  }
-  */
-  static post(req, res){
-    res.status(201);
-    res.end(JSON.stringify({ status: "success" }));
-    console.log(req.body.guess);
-
+    game.addGuess(req.body.guess, (err) => {
+      if(err){
+        res.send(err);
+        return;
+      }
+      res.send("Ok " + req.body.guess);
+    });
   }
 
 }

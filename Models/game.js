@@ -1,61 +1,80 @@
 'use strict';
 
-var gameRepository = require('./../repository/GameRepository.js');
+cosnt roundTypes = {
+  DRAWING: "DRAWING",
+  GUESSING: "GUESSING"
+};
+
+const gameRepository = require('./../repository/GameRepository.js');
 
 class Game {
 
   constructor(cb){
     this.createGame(cb);
     this.players = []
-    this.guesses = []
+    this.roundType = roundTypes.DRAWING;
+    this.round = 0;
+    /* guessBlock = { guesserId: 2, guess: "eple", drawerId: 3, drawingId: 321 } */
+    this.guessBlocks = []
     this.isStarted = false;
     /* guess { word, bitmapId } */
   }
 
-  createGame(cb){
-    gameRepository.createGame(function(err, gamePin) {
-      if (err) return (err);
+  createGame(successHandler){
+    gameRepository.createGame( (err, gamePin) => {
+      if(err){
+        console.log("Error:", err);
+        return err;
+      };
       console.log('Game created...');
-      cb(gamePin);
-      this.setGamePin(gamePin);
-    }.bind(this));
+      successHandler(gamePin);
+      this.gamePin = gamePin;
+    });
   }
 
-  getGamePin(){
-    return this.gamePin;
+
+  _allGuessesReceived(){
+    if(this.roundType === roundTypes.DRAWING){
+        this.guessBlocks.map( (guessBlock) => {
+          const hasDrawing = !guessBlock[this.round].drawingId;
+          if (!hasDrawing) return false;
+        });
+        return true;
+    }
+    else{
+      this.guessBlocks.map( (guessBlock) => {
+        const hasGuessValue = !guessBlock[this.round].guess;
+        if (!hasGuessValue) return false;
+      })
+      return true;
+    }
+
+    return false;
   }
 
-  setGamePin(gamePin){
-    this.gamePin = gamePin;
+  addGuess({ guessValue, playerId }){
+    // add guess blabla
+    if(this._allGuessesReceived()){
+      const currentRoundType = this.roundType;
+      this.roundType = currentRoundType == roundTypes.DRAWING ? roundTypes.GUESSING : roundTypes.DRAWING;
+      this.round += 1;
+    }
   }
 
-  addPlayer(player){
+
+  addPlayer(player, successHandler){
     this.players.push(player);
-    // Save to database
+    gameRepository.addPlayer({ gamePin: this.gamePin, players: this.players.join(",") }, successHandler);
   }
+
 
   removePlayer(player){
     var index = this.players.indexOf(player);
-    if (index != -1) this.players.splice(index, 1);
+    if (index != -1){
+      this.players.splice(index, 1);
+    }
   }
 
 }
 
-
 module.exports = Game;
-
-/*
-
-var createGame = fucntion(cb){
-  gameRepository.createGame(function(err, id) {
-    if (err) return (err);
-    console.log('Game created...');
-    cb(id);
-  });
-}
-
-module.exports = {
-  createGame: createGame
-}
-
-*/

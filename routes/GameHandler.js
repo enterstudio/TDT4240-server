@@ -3,14 +3,18 @@ const Game = require('../Models/game')
 
 class GameHandler {
 
-  static setGames(games){
+  static _setGames(games){
     GameHandler.games = games;
   }
 
 
-  static get(req, res){
-    const game = GameHandler.games[req.params.gamePin];
+  static _getGame(request){
+    return GameHandler.games[request.params.gamePin];
+  }
 
+
+  static get(req, res){
+    const game = GameHandler._getGame(req);
     if(game){
       res.send(game);
     }
@@ -21,12 +25,25 @@ class GameHandler {
 
 
   static post(req, res){
-      var game = new Game( (gamePin) => {
+      const game = new Game( (gamePin) => {
+        console.log("GamePin:", gamePin);
         res.send(JSON.stringify({ gamePin: gamePin })
       );
-
       GameHandler.games[gamePin] = game;
     });
+  }
+
+
+  static joinGame(req, res){
+      const game = GameHandler._getGame(req);
+      if(!game){
+        res.statud(404).send("Game not found");
+        return;
+      }
+      const nextPlayerId = game.players.length;
+      game.addPlayer({ gamePin: game.gamePin, playerId: nextPlayerId }, () => {
+        res.send({ myPlayerId: nextPlayerId });
+      });
   }
 
 }

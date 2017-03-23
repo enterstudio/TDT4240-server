@@ -22,10 +22,9 @@ const GuessHandler = require('./GuessHandler');
 const PlayerHandler = require('./PlayerHandler');
 const games = {};
 
-GameHandler.setGames(games);
-PlayerHandler.setGames(games);
-GuessHandler.setGames(games);
-DrawHandler.setGames(games);
+GameHandler._setGames(games);
+GuessHandler._setGames(games);
+DrawHandler._setGames(games);
 
 /*
   POST : http://localhost:8000/game       - Create game
@@ -35,19 +34,25 @@ DrawHandler.setGames(games);
 
 const urls = {
   newGame: "/game",
+  joinGame: "/game/:gamePin/join",
   game: "/game/:gamePin",
-  player: "/player",
   guess: "/guess",
-  drawing: "/drawing"
+  drawing: "/drawing",
+  getDrawing: "/drawing/:id"
 }
 
 router.get(urls.game, GameHandler.get);
 router.post(urls.newGame, GameHandler.post);
-router.get(urls.player, PlayerHandler.get);
-router.post(urls.player, PlayerHandler.post);
+router.post(urls.joinGame, GameHandler.joinGame);
 router.get(urls.guess, GuessHandler.get);
 router.post(urls.guess, GuessHandler.post);
+router.get(urls.drawing, DrawHandler.get);
 router.post(urls.drawing, DrawHandler.post);
+/*
+router.get(urls.player, PlayerHandler.get);
+router.post(urls.player, PlayerHandler.post);
+*/
+
 /*
 router.post(urls.drawing, upload.single('img') , (req, res) => {
   console.log("Saved file with name: ", req.filename);
