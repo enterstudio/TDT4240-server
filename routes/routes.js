@@ -25,6 +25,7 @@ const games = {};
 GameHandler.setGames(games);
 PlayerHandler.setGames(games);
 GuessHandler.setGames(games);
+DrawHandler.setGames(games);
 
 /*
   POST : http://localhost:8000/game       - Create game
@@ -46,11 +47,11 @@ router.get(urls.player, PlayerHandler.get);
 router.post(urls.player, PlayerHandler.post);
 router.get(urls.guess, GuessHandler.get);
 router.post(urls.guess, GuessHandler.post);
-
-
+router.post(urls.drawing, DrawHandler.post);
+/*
 router.post(urls.drawing, upload.single('img') , (req, res) => {
   console.log("Saved file with name: ", req.filename);
   res.send("Ok");
-});
+});*/
 
 module.exports = router;

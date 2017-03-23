@@ -1,3 +1,5 @@
+const DrawRepository = require('../repository/drawRepository');
+
 class DrawHandler {
 
   static setGames(games){
@@ -6,8 +8,15 @@ class DrawHandler {
 
   static post(req, res){
   	res.status(201);
-  	res.end(JSON.stringify({ status: "success" }));
-  	console.log(req.body.image);
+    DrawRepository.createDrawing({
+      gamePin: 1,
+      playerId: 1,
+      imageString: req.body.image
+    }, (err, id) => {
+      console.log("Image id: ", id);
+    });
+
+  	res.send(JSON.stringify({ status: "success" }));
 
   }
 

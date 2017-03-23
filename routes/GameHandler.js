@@ -19,11 +19,12 @@ class GameHandler {
     }
   }
 
+
   static post(req, res){
-      var game = new Game( function(gamePin)
-      {
-        res.send(JSON.stringify({ gamePin: gamePin
-      }));
+      var game = new Game( (gamePin) => {
+        res.send(JSON.stringify({ gamePin: gamePin })
+      );
+
       GameHandler.games[gamePin] = game;
     });
   }

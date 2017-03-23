@@ -4,7 +4,7 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var multer = require('multer');
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '1mb' }));
 // Repository for the application
 var repository = require('./repository/repository.js');
 // Routes for the application
