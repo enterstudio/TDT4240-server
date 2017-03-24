@@ -21,7 +21,7 @@ class Repository {
       db.run("INSERT INTO player (id, name, score, gamePin) VALUES (?, ?, ?, ?)", 1, "thomas", 999, 1);
 
       // Drawing
-      db.run("CREATE TABLE IF NOT EXISTS drawing (id INTERGER PRIMARY KEY, playerid INTERGER, gamepin INTERGER, file BLOB, CONSTRAINT fk FOREIGN KEY (playerid) REFERENCES player(id) )");
+      db.run("CREATE TABLE IF NOT EXISTS drawing (id INTEGER PRIMARY KEY, playerid INTERGER, gamepin INTERGER, file BLOB, CONSTRAINT fk FOREIGN KEY (playerid) REFERENCES player(id) )");
 
     });
 

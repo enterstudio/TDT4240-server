@@ -5,33 +5,43 @@ var db = new sqlite3.Database('repository/sqlite3/dbfile.db');
 const assert = require('assert');
 
 const INSERT = "INSERT INTO drawing (gamepin, playerid, file) VALUES(?, ?, ?);";
-const GET_DRAWING = "SELECT * FROM drawing WHERE playerid = ? AND gamepin = ?;";
+const GET_DRAWING = "SELECT * FROM drawing WHERE id = ?";
 
 class DrawRepository {
 
-  static createDrawing({ gamePin, playerId, imageString }, handler){
-    assert.ok(gamePin, "createDrawing: no gamepin found");
-    assert.ok(playerId, "createDrawing: no playid found");
+  static createDrawing({ gamePin, playerId, imageString }){
+    assert.ok(gamePin, "createDrawing: no gamePin found");
+    if(playerId !== 0){
+      assert.ok(playerId, "createDrawing: no playerId found");
+    }
     assert.ok(imageString, "createDrawing: no imageString found");
 
     console.log('Creating drawing...');
-
-    db.run(INSERT, [gamePin, playerId, imageString], (err, id) => {
-      if (err){
-        console.log(err)
-        handler("Something went wrong", null);
-      }
-      handler(null, this.lastID);
+    return new Promise( (resolve, reject) => {
+      db.run(INSERT, [gamePin, playerId, imageString], function (err, id) {
+        if (err){
+          console.log(err)
+          reject("Something went wrong");
+        }
+        resolve(this.lastID);
+      });
     });
-
   }
 
 
-  static getDrawing({ gamepin, playerid }, callback){
-    assert.ok(gamepin, "getDrawing: no gamepin found");
-    assert.ok(playerid, "getDrawing: no playerid found");
-
-    db.run(GET_DRAWING, [gamepin, playerid], () => {})
+  static getDrawing({ id }){
+    assert.ok(id, "getDrawing: no id found");
+    console.log("Getting drawing with id:", id);
+    return new Promise((resolve, reject) => {
+      db.all(GET_DRAWING, [id], (err, rows) => {
+        console.log("Drawing err:", err);
+        console.log("Drawing data:", rows);
+        if(err){
+          reject(err);
+        }
+        resolve(rows[0]);
+      })
+    })
 
   }
 

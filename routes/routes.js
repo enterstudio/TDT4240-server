@@ -46,7 +46,7 @@ router.post(urls.newGame, GameHandler.post);
 router.post(urls.joinGame, GameHandler.joinGame);
 router.get(urls.guess, GuessHandler.get);
 router.post(urls.guess, GuessHandler.post);
-router.get(urls.drawing, DrawHandler.get);
+router.get(urls.getDrawing, DrawHandler.get);
 router.post(urls.drawing, DrawHandler.post);
 /*
 router.get(urls.player, PlayerHandler.get);

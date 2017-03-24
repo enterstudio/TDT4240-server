@@ -1,27 +1,28 @@
 'use strict';
 
-cosnt roundTypes = {
+const roundTypes = {
   DRAWING: "DRAWING",
   GUESSING: "GUESSING"
 };
 
-const gameRepository = require('./../repository/GameRepository.js');
+const GameRepository = require('./../repository/gameRepository.js');
+const DrawRepository = require('./../repository/drawRepository.js');
 
 class Game {
 
-  constructor(cb){
-    this.createGame(cb);
-    this.players = []
+  constructor(handler){
+    this.createGame(handler);
+    this.players = [0]
     this.roundType = roundTypes.DRAWING;
     this.round = 0;
     /* guessBlock = { guesserId: 2, guess: "eple", drawerId: 3, drawingId: 321 } */
-    this.guessBlocks = []
+    this.guessesReceivedCurrentRound = 0;
+    this.guessBlocks = [[],[],[],[]];
     this.isStarted = false;
-    /* guess { word, bitmapId } */
   }
 
   createGame(successHandler){
-    gameRepository.createGame( (err, gamePin) => {
+    GameRepository.createGame( (err, gamePin) => {
       if(err){
         console.log("Error:", err);
         return err;
@@ -33,38 +34,55 @@ class Game {
   }
 
 
-  _allGuessesReceived(){
-    if(this.roundType === roundTypes.DRAWING){
-        this.guessBlocks.map( (guessBlock) => {
-          const hasDrawing = !guessBlock[this.round].drawingId;
-          if (!hasDrawing) return false;
-        });
-        return true;
-    }
-    else{
-      this.guessBlocks.map( (guessBlock) => {
-        const hasGuessValue = !guessBlock[this.round].guess;
-        if (!hasGuessValue) return false;
-      })
+  _updateIfAllGuessesReceived(){
+    if(this.guessesReceivedCurrentRound === this.players.length){
+      this.guessesReceivedCurrentRound = 0;
+      this.round += 1;
       return true;
     }
-
     return false;
   }
 
+
   addGuess({ guessValue, playerId }){
-    // add guess blabla
-    if(this._allGuessesReceived()){
-      const currentRoundType = this.roundType;
-      this.roundType = currentRoundType == roundTypes.DRAWING ? roundTypes.GUESSING : roundTypes.DRAWING;
-      this.round += 1;
+    this.guessesReceivedCurrentRound += 1;
+    this.guessBlocks[playerId-1][this.round] = {
+      guessValue, guesserId: playerId
     }
+    this._updateIfAllGuessesReceived();
+  }
+
+
+  addDrawing({ playerId, imageString, round }){
+    this.guessesReceivedCurrentRound += 1;
+
+    const drawingData = {
+      playerId,
+      gamePin: this.gamePin,
+      imageString: imageString
+    };
+    console.log("DRAWING ARGS:", JSON.stringify(drawingData));
+    DrawRepository.createDrawing(drawingData)
+      .then((id) => {
+        const guessBlockIndex = (playerId + round) % this.players.length;
+        this.guessBlocks[guessBlockIndex][round] = {
+          drawingId: id, drawerId: playerId
+        };
+        this._updateIfAllGuessesReceived();
+        // TODO: Save game object to database
+      })
+  }
+
+
+  getDrawing({ playerId, round }){
+    const guessBlockIndex = playerId + round % this.players.length;
+    return game.guessBlocks[guessBlockIndex][round];
   }
 
 
   addPlayer(player, successHandler){
-    this.players.push(player);
-    gameRepository.addPlayer({ gamePin: this.gamePin, players: this.players.join(",") }, successHandler);
+    this.players.push(player.playerId);
+    GameRepository.addPlayer({ gamePin: this.gamePin, players: this.players.join(",") }, successHandler);
   }
 
 

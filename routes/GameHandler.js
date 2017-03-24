@@ -25,12 +25,12 @@ class GameHandler {
 
 
   static post(req, res){
-      const game = new Game( (gamePin) => {
-        console.log("GamePin:", gamePin);
-        res.send(JSON.stringify({ gamePin: gamePin })
-      );
+    const game = new Game( (gamePin) => {
+      console.log("GamePin:", gamePin);
+      res.send({ gamePin })
       GameHandler.games[gamePin] = game;
     });
+
   }
 
 
@@ -40,12 +40,12 @@ class GameHandler {
         res.statud(404).send("Game not found");
         return;
       }
+
       const nextPlayerId = game.players.length;
       game.addPlayer({ gamePin: game.gamePin, playerId: nextPlayerId }, () => {
         res.send({ myPlayerId: nextPlayerId });
       });
   }
-
 }
 
 module.exports = GameHandler
