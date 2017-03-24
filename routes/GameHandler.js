@@ -37,7 +37,7 @@ class GameHandler {
   static joinGame(req, res){
       const game = GameHandler._getGame(req);
       if(!game){
-        res.statud(404).send("Game not found");
+        res.status(404).send("Game not found");
         return;
       }
 

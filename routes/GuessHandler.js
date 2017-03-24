@@ -36,13 +36,13 @@ class GuessHandler {
       res.status(404).send("Game does not exist");
     }
 
-    game.addGuess({ guessValue: req.body.guess, playerId: req.body.playerId  }, (err) => {
-      if(err){
-        res.send(err);
-        return;
-      }
-      res.send("Ok " + req.body.guess);
-    });
+    game.addGuess({ guessValue: req.body.guess, playerId: req.body.playerId  })
+    .then(() => {
+      res.send("Success");
+    })
+    .catch((err) => {
+      res.status(404).send(err);
+    })
   }
 
 }

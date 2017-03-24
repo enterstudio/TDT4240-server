@@ -45,11 +45,14 @@ class Game {
 
 
   addGuess({ guessValue, playerId }){
-    this.guessesReceivedCurrentRound += 1;
-    this.guessBlocks[playerId-1][this.round] = {
-      guessValue, guesserId: playerId
-    }
-    this._updateIfAllGuessesReceived();
+    return new Promise((resolve, reject) => {
+      this.guessesReceivedCurrentRound += 1;
+      this.guessBlocks[playerId][this.round] = {
+        guessValue, guesserId: playerId
+      }
+      this._updateIfAllGuessesReceived();
+      resolve();
+    })
   }
 
 
