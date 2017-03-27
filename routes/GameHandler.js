@@ -1,5 +1,5 @@
 'use strict';
-const Game = require('../Models/game')
+const Game = require('../Models/game');
 
 class GameHandler {
 
@@ -14,13 +14,32 @@ class GameHandler {
 
 
   static get(req, res){
+    if(!req.params.gamePin){
+      res.send("Request does not have gamePin");
+      return;
+    }
+
     const game = GameHandler._getGame(req);
-    if(game){
-      res.send(game);
+
+    if(!game){
+      res.send("Game does not exist");
+      return;
     }
-    else{
-      res.status(404).send("Not found");
+
+    if(req.query.playerid && req.query.round){
+      console.log("Getting drawing");
+      game.getDrawing({ playerId: req.query.playerid, round: req.query.round })
+        .then( (drawing) => {
+          res.send({ image: drawing });
+        })
+        .catch( (err) => {
+          console.log("Error getting drawing:", err);
+          res.send(err);
+        });
+      return;
     }
+
+    res.send(game);
   }
 
 

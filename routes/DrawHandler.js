@@ -8,7 +8,7 @@ class DrawHandler {
 
 
   static _getGame(request){
-    console.log("Getting game with gamePin :", request.body);
+    //console.log("Getting game with gamePin :", request.body);
     return DrawHandler.games[request.body.gamePin];
   }
 
@@ -30,9 +30,14 @@ class DrawHandler {
       playerId: req.body.playerId,
       round: req.body.round,
       imageString: req.body.image
-    });
+    })
+    .then( () => {
+      res.send(JSON.stringify({ status: "success" }));
+    })
+    .catch( (err) => {
+      res.status(500).send("Something went wrong");
+    })
 
-  	res.send(JSON.stringify({ status: "success" }));
   }
 
   static get(req, res){

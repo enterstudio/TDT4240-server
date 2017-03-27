@@ -18,6 +18,7 @@ const Game = require('./../Models/Game');
 const Player = require('./../Models/Player');
 const GameHandler = require('./GameHandler');
 const DrawHandler = require('./DrawHandler');
+const ScoreHandler = require('./ScoreHandler');
 const GuessHandler = require('./GuessHandler');
 const PlayerHandler = require('./PlayerHandler');
 const games = {};
@@ -25,12 +26,12 @@ const games = {};
 GameHandler._setGames(games);
 GuessHandler._setGames(games);
 DrawHandler._setGames(games);
+ScoreHandler._setGames(games);
 
 /*
   POST : http://localhost:8000/game       - Create game
   POST : http://localhost:8000/game/:id   - Join game
 */
-
 
 const urls = {
   newGame: "/game",
@@ -38,7 +39,8 @@ const urls = {
   game: "/game/:gamePin",
   guess: "/guess",
   drawing: "/drawing",
-  getDrawing: "/drawing/:id"
+  getDrawing: "/drawing/:id",
+  score: "/score"
 }
 
 router.get(urls.game, GameHandler.get);
@@ -48,6 +50,7 @@ router.get(urls.guess, GuessHandler.get);
 router.post(urls.guess, GuessHandler.post);
 router.get(urls.getDrawing, DrawHandler.get);
 router.post(urls.drawing, DrawHandler.post);
+router.post(urls.score, ScoreHandler.post);
 /*
 router.get(urls.player, PlayerHandler.get);
 router.post(urls.player, PlayerHandler.post);

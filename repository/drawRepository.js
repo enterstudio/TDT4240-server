@@ -30,7 +30,7 @@ class DrawRepository {
 
 
   static getDrawing({ id }){
-    assert.ok(id, "getDrawing: no id found");
+    assert.ok(id, "DrawRepository.getDrawing: no id found");
     console.log("Getting drawing with id:", id);
     return new Promise((resolve, reject) => {
       db.all(GET_DRAWING, [id], (err, rows) => {

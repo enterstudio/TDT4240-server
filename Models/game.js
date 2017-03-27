@@ -1,10 +1,10 @@
 'use strict';
-
 const roundTypes = {
   DRAWING: "DRAWING",
   GUESSING: "GUESSING"
 };
 
+const assert = require('assert');
 const GameRepository = require('./../repository/gameRepository.js');
 const DrawRepository = require('./../repository/drawRepository.js');
 
@@ -17,7 +17,7 @@ class Game {
     this.round = 0;
     /* guessBlock = { guesserId: 2, guess: "eple", drawerId: 3, drawingId: 321 } */
     this.guessesReceivedCurrentRound = 0;
-    this.guessBlocks = [[],[],[],[]];
+    this.guessBlocks = [[{ guesserId: null, guess: null, drawerId: null, drawingId: null}]];
     this.isStarted = false;
     this.scores = [0];
   }
@@ -65,29 +65,52 @@ class Game {
       gamePin: this.gamePin,
       imageString: imageString
     };
-    console.log("DRAWING ARGS:", JSON.stringify(drawingData));
-    DrawRepository.createDrawing(drawingData)
+    //console.log("DRAWING ARGS:", JSON.stringify(drawingData));
+    return DrawRepository.createDrawing(drawingData)
       .then((id) => {
         const guessBlockIndex = (playerId + round) % this.players.length;
         this.guessBlocks[guessBlockIndex][round] = {
           drawingId: id, drawerId: playerId
         };
         this._updateIfAllGuessesReceived();
+      });
         // TODO: Save game object to database
-      })
   }
 
 
   getDrawing({ playerId, round }){
-    const guessBlockIndex = playerId + round % this.players.length;
-    return game.guessBlocks[guessBlockIndex][round];
+    let guessBlockIndex = (parseInt(playerId, 10) + parseInt(round, 10)) % this.players.length
+    if(round == 0){ guessBlockIndex -= 1 }
+    console.log("Guessblock index", guessBlockIndex);
+    const guessBlock = this.guessBlocks[guessBlockIndex][round];
+    console.log("guessBlocks:", this.guessBlocks);
+    const drawingId = guessBlock.drawingId;
+    return DrawRepository.getDrawing({ id: drawingId })
+      .then( (drawing) => {
+        return drawing.file;
+      })
   }
 
 
   addPlayer(player, successHandler){
     this.players.push(player.playerId);
     this.scores.push(0);
+    this.guessBlocks.push([{ guesserId: null, guess: null, drawerId: null, drawingId: null}]);
     GameRepository.addPlayer({ gamePin: this.gamePin, players: this.players.join(",") }, successHandler);
+  }
+
+
+  addScore({ scores }){
+    assert.ok(scores, 'Game.addScore: scores must be supplied');
+    console.log("Adding scores");
+    return new Promise( (resolve, reject) => {
+      Object.keys(scores).forEach( (key) => {
+        this.scores[key] += scores[key];
+      });
+      console.log("Resolving after adding scores");
+      resolve(this.scores);
+    })
+
   }
 
 
