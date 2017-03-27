@@ -8,12 +8,23 @@ class DrawHandler {
 
 
   static _getGame(request){
+    console.log("Getting game with gamePin :", request.body);
     return DrawHandler.games[request.body.gamePin];
   }
 
 
   static post(req, res){
+    if(!req.body.gamePin){
+      res.send("Request missing gamePin");
+      return;
+    }
+
     const game = DrawHandler._getGame(req);
+
+    if(!game){
+      res.send("Game does not exist");
+      return;
+    }
 
     game.addDrawing({
       playerId: req.body.playerId,
