@@ -19,6 +19,7 @@ class Game {
     this.guessesReceivedCurrentRound = 0;
     this.guessBlocks = [[],[],[],[]];
     this.isStarted = false;
+    this.scores = [0];
   }
 
   createGame(successHandler){
@@ -85,6 +86,7 @@ class Game {
 
   addPlayer(player, successHandler){
     this.players.push(player.playerId);
+    this.scores.push(0);
     GameRepository.addPlayer({ gamePin: this.gamePin, players: this.players.join(",") }, successHandler);
   }
 
