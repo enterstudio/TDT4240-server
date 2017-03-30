@@ -14,8 +14,8 @@ class DrawHandler {
 
 
   static post(req, res){
-    if(!req.body.gamePin){
-      res.send("Request missing gamePin");
+    if(!req.body.gamePin || !req.body.playerId || !req.body.image || !req.body.round){
+      res.status(400).send("Request missing gamePin, roun, playerId or image");
       return;
     }
 
