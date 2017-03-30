@@ -13,7 +13,7 @@ app.use(require('./routes/routes'))
 class Server {
 
   static startServer(){
-    var server = app.listen(8000,"127.0.0.1", function() {
+    var server = app.listen(8000,"0.0.0.0", function() {
       var host = server.address().address
       var port = server.address().port
       console.log('running at http://' + host + ':' + port)

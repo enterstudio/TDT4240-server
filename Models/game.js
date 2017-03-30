@@ -19,6 +19,7 @@ class Game {
     this.guessesReceivedCurrentRound = 0;
     this.guessBlocks = [[{ guesserId: null, guess: null, drawerId: null, drawingId: null}]];
     this.isStarted = false;
+    this.isFinished = false;
     this.scores = [0];
   }
 
@@ -47,8 +48,10 @@ class Game {
 
   addGuess({ guessValue, playerId }){
     return new Promise((resolve, reject) => {
+      const guessBlockIndex = (parseInt(playerId) + parseInt(this.round)) % this.players.length;
+      console.log("Addguess guessBlockINdex", guessBlockIndex);
       this.guessesReceivedCurrentRound += 1;
-      this.guessBlocks[playerId][this.round] = {
+      this.guessBlocks[guessBlockIndex][this.round] = {
         guessValue, guesserId: playerId
       }
       this._updateIfAllGuessesReceived();
@@ -81,14 +84,23 @@ class Game {
   getDrawing({ playerId, round }){
     let guessBlockIndex = (parseInt(playerId, 10) + parseInt(round, 10)) % this.players.length
     if(round == 0){ guessBlockIndex -= 1 }
-    console.log("Guessblock index", guessBlockIndex);
     const guessBlock = this.guessBlocks[guessBlockIndex][round];
-    console.log("guessBlocks:", this.guessBlocks);
     const drawingId = guessBlock.drawingId;
     return DrawRepository.getDrawing({ id: drawingId })
       .then( (drawing) => {
         return drawing.file;
       })
+  }
+
+  getGuess({ playerId, round }){
+    let guessBlockIndex = (parseInt(playerId, 10) + parseInt(round, 10)) % this.players.length
+
+    if(round == 0){
+      guessBlockIndex -= 1
+    }
+
+    const guessBlock = this.guessBlocks[guessBlockIndex][round];
+    return guessBlock.guess;
   }
 
 
@@ -102,12 +114,10 @@ class Game {
 
   addScore({ scores }){
     assert.ok(scores, 'Game.addScore: scores must be supplied');
-    console.log("Adding scores");
     return new Promise( (resolve, reject) => {
       Object.keys(scores).forEach( (key) => {
         this.scores[key] += scores[key];
       });
-      console.log("Resolving after adding scores");
       resolve(this.scores);
     })
 

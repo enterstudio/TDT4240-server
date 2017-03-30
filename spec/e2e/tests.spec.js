@@ -6,6 +6,7 @@ describe("End to end tests - ", () => {
   const gameUrl = baseUrl + "game/"
   const drawingUrl = baseUrl + "drawing/"
   const scoreUrl = baseUrl + "score/";
+  const guessUrl = baseUrl + "guess/";
 
   describe('Play game nicely - ', () => {
 
@@ -99,6 +100,36 @@ describe("End to end tests - ", () => {
           })
       })
 
+
+      it('should be able to receive guess nicely', (done) => {
+        const payload = { playerId: 1, guess: "banana", gamePin: 1 };
+
+        fetch(guessUrl, {
+          headers: { 'Content-Type': 'application/json' },
+          method: 'POST',
+          body: JSON.stringify(payload)
+        })
+          .then( (rawData) => {
+            rawData.json()
+              .then( (data) => {
+                expect(data.status).toBe('success');
+                done();
+              })
+          })
+      })
+
+      it('should have put player with playerId 1s guess in ', (done) => {
+        fetch(gameUrl + "1/", {
+          method: 'GET'
+        })
+          .then( (rawData) => {
+            rawData.json()
+              .then( (data) => {
+                expect(data.guessBlocks[0][1].guessValue).toBe('banana');
+                done();
+              });
+          });
+      })
 
       it('should update scores when they are received', (done) => {
         const scoreData = {

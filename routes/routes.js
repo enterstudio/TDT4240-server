@@ -38,6 +38,7 @@ const urls = {
   joinGame: "/game/:gamePin/join",
   game: "/game/:gamePin",
   guess: "/guess",
+  getGuess: "/guess/:gamePin",
   drawing: "/drawing",
   getDrawing: "/drawing/:id",
   score: "/score"
@@ -46,7 +47,7 @@ const urls = {
 router.get(urls.game, GameHandler.get);
 router.post(urls.newGame, GameHandler.post);
 router.post(urls.joinGame, GameHandler.joinGame);
-router.get(urls.guess, GuessHandler.get);
+router.get(urls.getGuess, GuessHandler.get);
 router.post(urls.guess, GuessHandler.post);
 router.get(urls.getDrawing, DrawHandler.get);
 router.post(urls.drawing, DrawHandler.post);

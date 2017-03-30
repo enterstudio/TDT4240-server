@@ -13,40 +13,44 @@ class GuessHandler {
 
 
   static get(req, res){
-    if(!req.body.gamePin){
+    if(!req.params.gamePin || !req.query.playerid || !req.query.round){
       res.status(404).send("Game not found");
       return;
     }
 
-    const game = GuessHandler._getGame(req)
+    const game = GuessHandler.games[req.params.gamePin];
     if(!game){
       res.status(404).send("Game does not exist");
-    }
+      return;
+    };
 
-    res.send(game.getDrawing({
-      playerId: req.body.playerId,
-      round: req.body.round
-    }));
+    game.getGuess({
+      playerId: req.query.playerid,
+      round: req.query.round
+    });
   }
 
 
   static post(req, res){
-    if(!req.body.gamePin || !req.body.guess || !req.body.playerId ){
-      res.status(400).send("Request missing body params");
+    if(!req.body.gamePin || !req.body.guess || (!req.body.playerId && req.body.playerId !== 0 ) ){
+      console.log("Something is wrong with", req.body);
+      res.status(400).send({ status: "Request missing body params" });
+      return;
     }
 
     const game = GuessHandler._getGame(req);
     if(!game){
-      res.status(404).send("Game does not exist");
+      res.status(404).send({ status: "Game does not exist" });
       return;
     }
 
     game.addGuess({ guessValue: req.body.guess, playerId: req.body.playerId  })
     .then(() => {
-      res.send("Success");
+      res.send({ status: "success" });
     })
     .catch((err) => {
-      res.status(404).send(err);
+      console.log("ERROR: ", err);
+      res.status(404).send({ status: err });
     })
   }
 

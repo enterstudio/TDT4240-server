@@ -14,15 +14,17 @@ class DrawHandler {
 
 
   static post(req, res){
-    if(!req.body.gamePin || !req.body.playerId || !req.body.image || !req.body.round){
-      res.status(400).send("Request missing gamePin, roun, playerId or image");
+
+    if(!req.body.gamePin || (!req.body.playerId && req.body.playerId !== 0)  || !req.body.image || (!req.body.round && req.body.round !== 0 )){
+      console.log("something was wrong with :", req.body);
+      res.status(400).send({ status: "Request missing gamePin, round, playerId or image" });
       return;
     }
 
     const game = DrawHandler._getGame(req);
 
     if(!game){
-      res.send("Game does not exist");
+      res.send({ status: "Game does not exist" });
       return;
     }
 
@@ -35,7 +37,7 @@ class DrawHandler {
       res.send(JSON.stringify({ status: "success" }));
     })
     .catch( (err) => {
-      res.status(500).send("Something went wrong");
+      res.status(500).send({ status: "Something went wrong" });
     })
 
   }
@@ -49,7 +51,7 @@ class DrawHandler {
     })
     .catch((err) => {
       console.log(err);
-      res.status(404).send(err);
+      res.status(404).send({ status: err });
     })
   }
 
