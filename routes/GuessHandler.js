@@ -31,9 +31,14 @@ class GuessHandler {
 
 
   static post(req, res){
+    if(!req.body.gamePin || !req.body.guess || !req.body.playerId ){
+      res.status(400).send("Request missing body params");
+    }
+
     const game = GuessHandler._getGame(req);
     if(!game){
       res.status(404).send("Game does not exist");
+      return;
     }
 
     game.addGuess({ guessValue: req.body.guess, playerId: req.body.playerId  })
