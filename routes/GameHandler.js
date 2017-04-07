@@ -52,6 +52,16 @@ class GameHandler {
 
   }
 
+  static startGame(req, res){
+     const game = GameHandler._getGame(req);
+     if(!game){
+        res.status(404).send("Game not found");
+        return;
+     }
+     game.startGame();
+     res.send({isStarted: true});
+ }
+
 
   static joinGame(req, res){
       const game = GameHandler._getGame(req);

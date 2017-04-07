@@ -4,7 +4,7 @@ var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database('repository/sqlite3/dbfile.db');
 const assert = require('assert');
 
-const INSERT = "INSERT INTO drawing (gamepin, playerid, file) VALUES(?, ?, ?);";
+const INSERT = "INSERT INTO drawing (id, gamepin, playerid, file) VALUES(?, ?, ?, ?);";
 const GET_DRAWING = "SELECT * FROM drawing WHERE id = ?";
 
 class DrawRepository {
@@ -18,7 +18,7 @@ class DrawRepository {
 
     console.log('Creating drawing...');
     return new Promise( (resolve, reject) => {
-      db.run(INSERT, [gamePin, playerId, imageString], function (err, id) {
+      db.run(INSERT, [null, gamePin, playerId, imageString], function (err, id) {
         if (err){
           console.log(err)
           reject("Something went wrong");
@@ -34,8 +34,8 @@ class DrawRepository {
     console.log("Getting drawing with id:", id);
     return new Promise((resolve, reject) => {
       db.all(GET_DRAWING, [id], (err, rows) => {
-        console.log("Drawing err:", err);
-        console.log("Drawing data:", rows);
+        //console.log("Drawing err:", err);
+        //console.log("Drawing data:", rows);
         if(err){
           reject(err);
         }

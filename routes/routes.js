@@ -41,7 +41,8 @@ const urls = {
   getGuess: "/guess/:gamePin",
   drawing: "/drawing",
   getDrawing: "/drawing/:id",
-  score: "/score"
+  score: "/score",
+  startGame: "/game/:gamePin/start"
 }
 
 router.get(urls.game, GameHandler.get);
@@ -52,6 +53,7 @@ router.post(urls.guess, GuessHandler.post);
 router.get(urls.getDrawing, DrawHandler.get);
 router.post(urls.drawing, DrawHandler.post);
 router.post(urls.score, ScoreHandler.post);
+router.post(urls.startGame, GameHandler.startGame);
 /*
 router.get(urls.player, PlayerHandler.get);
 router.post(urls.player, PlayerHandler.post);
