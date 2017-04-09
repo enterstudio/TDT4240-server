@@ -22,6 +22,7 @@ class Game {
     /* guessBlock = { guesserId: 2, guess: "eple", drawerId: 3, drawingId: 321 } */
     this.guessesReceivedCurrentRound = 0;
     this.guessBlocks = [];
+    this.guessBlocksDepth = 0;
     this.isStarted = false;
     this.isFinished = false;
     this.scores = [0];
@@ -38,15 +39,14 @@ class Game {
       successHandler(gamePin);
       this.gamePin = gamePin;
 
-      selectedWords = EVERY_WORD;
-      console.log("Selected words: ", selectedWords);
+      selectedWords = EVERY_WORD.slice(0);
 
       var tempIndex = Math.floor(Math.random()*selectedWords.length);
       var word = selectedWords[tempIndex];
       selectedWords.splice(tempIndex, 1);
       this.initialWords.push(word);
 
-      this.guessBlocks.push([{ guesserId: null, guess: null, drawerId: null, drawingId: null}]);
+      this.guessBlocks.push([]);
 
     });
   }
@@ -64,16 +64,29 @@ class Game {
     return false;
   }
 
+  _incrementGuessBlocksDepth(){
+     if(this.guessesReceivedCurrentRound === this.players.length){
+      this.guessBlocksDepth += 1;
+      return true;
+     }
+     return false;
+  }
 
   addGuess({ guessValue, playerId }){
     return new Promise((resolve, reject) => {
       const guessBlockIndex = (parseInt(playerId) + parseInt(this.round)) % this.players.length;
+      console.log("**************************************");
+      console.log("playerId,", playerId);
+      console.log("this.round: ", this.round);
+      console.log("guessBlocIndex: ", guessBlockIndex);
+      console.log("guessBlocksDepth", this.guessBlocksDepth);
+      console.log("**************************************");
+      console.log(" ");
       this.guessesReceivedCurrentRound += 1;
-      this.guessBlocks[guessBlockIndex][this.round] = {
-        guessValue, guesserId: playerId
-      }
+      this.guessBlocks[guessBlockIndex][this.guessBlocksDepth].guess = guessValue;
+      this.guessBlocks[guessBlockIndex][this.guessBlocksDepth].guesserId = playerId;
+      this._incrementGuessBlocksDepth();
       this._updateIfAllGuessesReceived();
-
       resolve();
     })
   }
@@ -81,25 +94,22 @@ class Game {
 
   addDrawing({ playerId, imageString, round }){
     this.guessesReceivedCurrentRound += 1;
-
     const drawingData = {
-      playerId,
+      playerId: playerId,
       gamePin: this.gamePin,
       imageString: imageString
     };
+
     //console.log("DRAWING ARGS:", JSON.stringify(drawingData));
     return DrawRepository.createDrawing(drawingData)
       .then((id) => {
-        const guessBlockIndex = (playerId + round) % this.players.length;
-        console.log("playerId: ", playerId);
-        console.log("round: ", round);
-        console.log("players length: ", this.players.length);
-        console.log("guessBlockIndex: ", guessBlockIndex);
-        this.guessBlocks[guessBlockIndex][round] = {
-          drawingId: id, drawerId: playerId
-        };
-        console.log("GuessBlocks: ", this.guessBlocks);
-        this._updateIfAllGuessesReceived();
+         const guessBlockIndex = (parseInt(playerId) + parseInt(round)) % this.players.length;
+         if (this.guessBlocks[guessBlockIndex][this.guessBlocksDepth] == null){
+            this.guessBlocks[guessBlockIndex].push({ guesserId: null, guess: null, drawerId: null, drawingId: null})
+         }
+         this.guessBlocks[guessBlockIndex][this.guessBlocksDepth].drawingId = id;
+         this.guessBlocks[guessBlockIndex][this.guessBlocksDepth].drawerId = playerId;
+         this._updateIfAllGuessesReceived();
       });
         // TODO: Save game object to database
   }
@@ -109,7 +119,6 @@ class Game {
     let guessBlockIndex = (parseInt(playerId, 10) + parseInt(round, 10)) % this.players.length
     if(round == 0){ guessBlockIndex -= 1 }
     const guessBlock = this.guessBlocks[guessBlockIndex][round];
-    console.log("guessBlock: ", guessBlock);
     const drawingId = guessBlock.drawingId;
     return DrawRepository.getDrawing({ id: drawingId })
       .then( (drawing) => {
@@ -138,7 +147,9 @@ class Game {
     selectedWords.splice(tempIndex, 1);
     this.initialWords.push(word);
 
-    this.guessBlocks.push([{ guesserId: null, guess: null, drawerId: null, drawingId: null}]);
+    //this.guessBlocks.push([{ guesserId: null, guess: null, drawerId: null, drawingId: null}]);
+    this.guessBlocks.push([]);
+
     GameRepository.addPlayer({ gamePin: this.gamePin, players: this.players.join(",") }, successHandler);
   }
 
