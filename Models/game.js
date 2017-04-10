@@ -23,6 +23,7 @@ class Game {
     this.guessesReceivedCurrentRound = 0;
     this.guessBlocks = [];
     this.guessBlocksDepth = 0;
+    this.scoresReceived = 0;
     this.isStarted = false;
     this.isFinished = false;
     this.scores = [0];
@@ -64,6 +65,16 @@ class Game {
     return false;
   }
 
+  _updateIfAllScoresReceived(){
+     console.log("scoresReceived: ", this.scoresReceived);
+     if(this.scoresReceived === this.players.length){
+        console.log("isFinished: ", this.isFinished);
+        this.isFinished = true;
+        return true;
+     }
+     return false;
+ }
+
   _incrementGuessBlocksDepth(){
      if(this.guessesReceivedCurrentRound === this.players.length){
       this.guessBlocksDepth += 1;
@@ -75,13 +86,6 @@ class Game {
   addGuess({ guessValue, playerId }){
     return new Promise((resolve, reject) => {
       const guessBlockIndex = (parseInt(playerId) + parseInt(this.round)) % this.players.length;
-      console.log("**************************************");
-      console.log("playerId,", playerId);
-      console.log("this.round: ", this.round);
-      console.log("guessBlocIndex: ", guessBlockIndex);
-      console.log("guessBlocksDepth", this.guessBlocksDepth);
-      console.log("**************************************");
-      console.log(" ");
       this.guessesReceivedCurrentRound += 1;
       this.guessBlocks[guessBlockIndex][this.guessBlocksDepth].guess = guessValue;
       this.guessBlocks[guessBlockIndex][this.guessBlocksDepth].guesserId = playerId;
@@ -154,16 +158,18 @@ class Game {
   }
 
 
-  addScore({ scores }){
-    assert.ok(scores, 'Game.addScore: scores must be supplied');
-    return new Promise( (resolve, reject) => {
-      Object.keys(scores).forEach( (key) => {
-        this.scores[key] += scores[key];
-      });
-      resolve(this.scores);
-    })
-
-  }
+   addScore({ scores }){
+      assert.ok(scores, 'Game.addScore: scores must be supplied');
+      return new Promise( (resolve, reject) => {
+         Object.keys(scores).forEach( (key) => {
+           this.scores[key] += scores[key];
+         });
+         console.log("scores: ", scores);
+         this.scoresReceived += 1;
+         this._updateIfAllScoresReceived();
+         resolve(this.scores);
+      })
+   }
 
 
   removePlayer(player){
