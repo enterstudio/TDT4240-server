@@ -70,6 +70,11 @@ class GameHandler {
         return;
       }
 
+      if(game.isStarted){
+        res.status(404).send("Game already started");
+        return;
+      }
+
       const nextPlayerId = game.players.length;
       game.addPlayer({ gamePin: game.gamePin, playerId: nextPlayerId }, () => {
         res.send({ myPlayerId: nextPlayerId });
