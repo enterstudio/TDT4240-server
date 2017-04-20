@@ -23,6 +23,9 @@ class Repository {
       // Drawing
       db.run("CREATE TABLE IF NOT EXISTS drawing (id INTEGER PRIMARY KEY NOT NULL, playerid INTERGER, gamepin INTERGER, file BLOB, CONSTRAINT fk FOREIGN KEY (playerid) REFERENCES player(id) )");
 
+      // Words
+      db.run("CREATE TABLE IF NOT EXISTS words (value VARCHAR)");
+
     });
 
   }

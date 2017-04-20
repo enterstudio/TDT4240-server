@@ -4,12 +4,23 @@ const roundTypes = {
   GUESSING: "GUESSING"
 };
 
-const EVERY_WORD = ["Banan", "Eple", "Agurk", "Melon", "Hest", "Hund", "Fotball", "Hus", "Sol", "Briller", "Fugl", "Klokke", "Ski", "Julenisse"];
+let EVERY_WORD = [];
 var selectedWords;
+
 
 const assert = require('assert');
 const GameRepository = require('./../repository/gameRepository.js');
 const DrawRepository = require('./../repository/drawRepository.js');
+const WordRepository = require('./../repository/wordRepository.js');
+
+
+WordRepository.getAllWords()
+  .then( (rows) => {
+    rows.forEach( (row) => {
+      EVERY_WORD.push(row.value);
+    });
+  });
+
 
 class Game {
 
