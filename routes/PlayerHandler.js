@@ -10,11 +10,6 @@ class PlayerHandler {
   }
 
 
-  static get(req, res){
-
-  }
-
-
   static put(req, res){
 
     if(!req.body.gamePin){
