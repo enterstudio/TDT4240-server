@@ -25,6 +25,11 @@ class Repository {
 
       // Words
       db.run("CREATE TABLE IF NOT EXISTS words (value VARCHAR)");
+      db.run("DELETE from words");
+      const words = ['Banan', 'Hund', 'Agurk', 'Fotball', 'Hus', 'Briller', 'Fugl', 'Sol', 'Klokke', 'Ski', 'Julenisse', 'Hest', 'Melon', 'Eple', 'Mobillader'];
+      words.forEach( (word) => {
+        db.run('INSERT into words VALUES ( ? )', word);
+      })
 
     });
 
