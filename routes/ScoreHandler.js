@@ -29,10 +29,6 @@ class ScoreHandler {
       });
   }
 
-
-  static get(req, res){
-
-  }
 }
 
 module.exports = ScoreHandler;
