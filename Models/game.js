@@ -77,9 +77,7 @@ class Game {
   }
 
   _updateIfAllScoresReceived(){
-     console.log("scoresReceived: ", this.scoresReceived);
      if(this.scoresReceived === this.players.length){
-        console.log("isFinished: ", this.isFinished);
         this.isFinished = true;
         return true;
      }
