@@ -27,6 +27,7 @@ GameHandler._setGames(games);
 GuessHandler._setGames(games);
 DrawHandler._setGames(games);
 ScoreHandler._setGames(games);
+PlayerHandler._setGames(games);
 
 /*
   POST : http://localhost:8000/game       - Create game
@@ -42,7 +43,8 @@ const urls = {
   drawing: "/drawing",
   getDrawing: "/drawing/:id",
   score: "/score",
-  startGame: "/game/:gamePin/start"
+  startGame: "/game/:gamePin/start",
+  player: "/player"
 }
 
 router.get(urls.game, GameHandler.get);
@@ -54,6 +56,7 @@ router.get(urls.getDrawing, DrawHandler.get);
 router.post(urls.drawing, DrawHandler.post);
 router.post(urls.score, ScoreHandler.post);
 router.post(urls.startGame, GameHandler.startGame);
+router.post(urls.player, PlayerHandler.put)
 /*
 router.get(urls.player, PlayerHandler.get);
 router.post(urls.player, PlayerHandler.post);
