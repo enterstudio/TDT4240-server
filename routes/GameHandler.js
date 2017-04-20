@@ -15,14 +15,14 @@ class GameHandler {
 
   static get(req, res){
     if(!req.params.gamePin){
-      res.send("Request does not have gamePin");
+      res.send({ status: "Request does not have gamePin" });
       return;
     }
 
     const game = GameHandler._getGame(req);
 
     if(!game){
-      res.send("Game does not exist");
+      res.send({ status: "Game does not exist" });
       return;
     }
 
@@ -34,7 +34,7 @@ class GameHandler {
         })
         .catch( (err) => {
           console.log("Error getting drawing:", err);
-          res.send(err);
+          res.send({ status: err });
         });
       return;
     }
