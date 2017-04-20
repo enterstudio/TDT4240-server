@@ -127,7 +127,12 @@ describe("End to end tests - ", () => {
         .then( (rawData) => {
           rawData.json()
             .then( (data) => {
-              expect(data.guessBlocks[0][1].guessValue).toBe('banana')
+              try{
+                expect(data.guessBlocks[0][0].guess).toBe('banana')
+              }
+              catch(err){
+                console.log("Malformed guessblocks response:", data.guessBlocks[0]);
+              }
               done();
             })
         })
