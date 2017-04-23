@@ -54,36 +54,41 @@ class GameHandler {
       return;
     }
 
-    const game = GameHandler._getGame(req);
-    if(!game){
-      res.status(404).send({ status: "Game does not exist" });
-      return;
-    }
+    const game = GameHandler._getGame(req)
+    .then( (game) => {
+      if(!game){
+        res.status(404).send({ status: "Game does not exist" });
+        return;
+      }
 
-    if(req.body.isStarted === true || req.body.isStarted === false){
-      game.isStarted = req.body.isStarted;
-      res.send({ status: "ok" });
-      return;
-    }
+      if(req.body.isStarted === true || req.body.isStarted === false){
+        game.isStarted = req.body.isStarted;
+        res.send({ status: "ok" });
+        return;
+      }
 
-    res.send({ status: "nothing was changed" });
+      res.send({ status: "nothing was changed" });
+    })
+
   }
 
   /* Deprecated */
   static startGame(req, res){
-     const game = GameHandler._getGame(req);
-     if(!game){
-        res.status(404).send({ isStarted: false, status: "Game not found" } );
-        return;
-     }
-     game.startGame();
-     res.send({isStarted: true});
+     const game = GameHandler._getGame(req)
+     .then( (game) => {
+       if(!game){
+          res.status(404).send({ isStarted: false, status: "Game not found" } );
+          return;
+       }
+       game.startGame();
+       res.send({isStarted: true});
+     })
  }
 
   /* Deprecated */
   static joinGame(req, res){
       const game = GameHandler._getGame(req)
-      .then( () => {
+      .then( (game) => {
 
         if(!game){
           res.status(404).send("Game not found");
