@@ -30,6 +30,7 @@ describe("End to end tests - ", () => {
 
     it('should be joined nicely', (done) => {
       fetch(playerUrl, {
+        headers: { 'Content-Type': 'application/json' },
         method: 'POST',
         body: JSON.stringify({ gamePin: 1 })
       })

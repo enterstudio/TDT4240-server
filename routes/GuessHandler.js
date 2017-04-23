@@ -38,20 +38,24 @@ class GuessHandler {
       return;
     }
 
-    const game = GuessHandler._getGame(req);
-    if(!game){
-      res.status(404).send({ status: "Game does not exist" });
-      return;
-    }
+    GuessHandler._getGame(req)
+    .then( (game) => {
 
-    game.addGuess({ guessValue: req.body.guess, playerId: req.body.playerId  })
-    .then(() => {
-      res.send({ status: "success" });
-    })
-    .catch((err) => {
-      console.log("ERROR: ", err);
-      res.status(404).send({ status: err });
-    })
+      if(!game){
+        res.status(404).send({ status: "Game does not exist" });
+        return;
+      }
+
+      game.addGuess({ guessValue: req.body.guess, playerId: req.body.playerId  })
+      .then(() => {
+        res.send({ status: "success" });
+      })
+      .catch((err) => {
+        console.log("ERROR: ", err);
+        res.status(404).send({ status: err });
+      });
+
+    });
   }
 
 }

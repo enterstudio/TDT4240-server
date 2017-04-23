@@ -64,9 +64,11 @@ class Game {
 
       this.guessBlocks.push([]);
 
-      this._save(this);
+      this._save(this)
+      .then( () => {
+        successHandler(gamePin);
+      });
 
-      successHandler(gamePin);
     });
   }
 
@@ -108,9 +110,11 @@ class Game {
       this.guessBlocks[guessBlockIndex][this.guessBlocksDepth].guesserId = playerId;
       this._incrementGuessBlocksDepth();
       this._updateIfAllGuessesReceived();
-      this._save();
-      resolve();
-    })
+      this._save()
+      .then( () => {
+        resolve();
+      });
+    });
   }
 
 
@@ -132,7 +136,7 @@ class Game {
          this.guessBlocks[guessBlockIndex][this.guessBlocksDepth].drawingId = id;
          this.guessBlocks[guessBlockIndex][this.guessBlocksDepth].drawerId = playerId;
          this._updateIfAllGuessesReceived();
-         this._save();
+         return this._save();
       });
   }
 
@@ -172,10 +176,11 @@ class Game {
     //this.guessBlocks.push([{ guesserId: null, guess: null, drawerId: null, drawingId: null}]);
     this.guessBlocks.push([]);
 
-    console.log("Playeradded sucess call")
-    successHandler();
+    this._save()
+    .then( () => {
+      successHandler();
+    });
 
-    this._save();
   }
 
 
@@ -188,10 +193,12 @@ class Game {
          console.log("scores: ", scores);
          this.scoresReceived += 1;
          this._updateIfAllScoresReceived();
-         resolve(this.scores);
-      })
+         this._save()
+         .then( () => {
+            resolve(this.scores);
+         });
+      });
 
-      this._save();
    }
 
 
