@@ -21,13 +21,6 @@ const DrawHandler = require('./DrawHandler');
 const ScoreHandler = require('./ScoreHandler');
 const GuessHandler = require('./GuessHandler');
 const PlayerHandler = require('./PlayerHandler');
-const games = {};
-
-GameHandler._setGames(games);
-GuessHandler._setGames(games);
-DrawHandler._setGames(games);
-ScoreHandler._setGames(games);
-PlayerHandler._setGames(games);
 
 /*
   POST : http://localhost:8000/game       - Create game
@@ -56,7 +49,8 @@ router.get(urls.getDrawing, DrawHandler.get);
 router.post(urls.drawing, DrawHandler.post);
 router.post(urls.score, ScoreHandler.post);
 router.post(urls.startGame, GameHandler.startGame);
-router.post(urls.player, PlayerHandler.put)
+router.post(urls.player, PlayerHandler.post);
+
 /*
 router.get(urls.player, PlayerHandler.get);
 router.post(urls.player, PlayerHandler.post);

@@ -3,13 +3,8 @@ const Game = require('../Models/game');
 
 class GameHandler {
 
-  static _setGames(games){
-    GameHandler.games = games;
-  }
-
-
   static _getGame(request){
-    return GameHandler.games[request.params.gamePin];
+    return Game.getGame(request.params.gamePin);
   }
 
 
@@ -19,35 +14,36 @@ class GameHandler {
       return;
     }
 
-    const game = GameHandler._getGame(req);
+    GameHandler._getGame(req)
+    .then( (game) => {
+      if(!game){
+        res.send({ status: "Game does not exist" });
+        return;
+      }
 
-    if(!game){
-      res.send({ status: "Game does not exist" });
-      return;
-    }
+      if(req.query.playerid && req.query.round){
+        console.log("Getting drawing");
+        game.getDrawing({ playerId: req.query.playerid, round: req.query.round })
+          .then( (drawing) => {
+            res.send({ image: drawing });
+          })
+          .catch( (err) => {
+            console.log("Error getting drawing:", err);
+            res.send({ status: err });
+          });
+        return;
+      }
 
-    if(req.query.playerid && req.query.round){
-      console.log("Getting drawing");
-      game.getDrawing({ playerId: req.query.playerid, round: req.query.round })
-        .then( (drawing) => {
-          res.send({ image: drawing });
-        })
-        .catch( (err) => {
-          console.log("Error getting drawing:", err);
-          res.send({ status: err });
-        });
-      return;
-    }
+      res.send(game);
+    });
 
-    res.send(game);
   }
 
 
   static post(req, res){
     const game = new Game( (gamePin) => {
       console.log("GamePin:", gamePin);
-      res.send({ gamePin })
-      GameHandler.games[gamePin] = game;
+      res.send({ gamePin });
     });
 
   }
@@ -86,21 +82,26 @@ class GameHandler {
 
   /* Deprecated */
   static joinGame(req, res){
-      const game = GameHandler._getGame(req);
-      if(!game){
-        res.status(404).send("Game not found");
-        return;
-      }
+      const game = GameHandler._getGame(req)
+      .then( () => {
 
-      if(game.isStarted){
-        res.status(404).send("Game already started");
-        return;
-      }
+        if(!game){
+          res.status(404).send("Game not found");
+          return;
+        }
 
-      const nextPlayerId = game.players.length;
-      game.addPlayer({ gamePin: game.gamePin, playerId: nextPlayerId }, () => {
-        res.send({ myPlayerId: nextPlayerId });
-      });
+        if(game.isStarted){
+          res.status(404).send("Game already started");
+          return;
+        }
+
+        const nextPlayerId = game.players.length;
+        game.addPlayer({ gamePin: game.gamePin, playerId: nextPlayerId }, () => {
+          res.send({ myPlayerId: nextPlayerId });
+        });
+
+      })
+
   }
 }
 

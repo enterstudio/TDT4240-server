@@ -7,6 +7,7 @@ describe("End to end tests - ", () => {
   const drawingUrl = baseUrl + "drawing/"
   const scoreUrl = baseUrl + "score/";
   const guessUrl = baseUrl + "guess/";
+  const playerUrl = baseUrl + "player";
 
   describe('Happy path game - ', () => {
 
@@ -28,8 +29,9 @@ describe("End to end tests - ", () => {
 
 
     it('should be joined nicely', (done) => {
-      fetch(gameUrl + "1/join/", {
-        method: 'POST'
+      fetch(playerUrl, {
+        method: 'POST',
+        body: JSON.stringify({ gamePin: 1 })
       })
         .then( (rawData) => {
           rawData.json()

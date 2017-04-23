@@ -1,15 +1,9 @@
-const DrawRepository = require('./../repository/drawRepository.js');
+const Game = require('../Models/game.js');
 
 class DrawHandler {
 
-  static _setGames(games){
-    DrawHandler.games = games;
-  }
-
-
   static _getGame(request){
-    //console.log("Getting game with gamePin :", request.body);
-    return DrawHandler.games[request.body.gamePin];
+    return Game.getGame(request.body.gamePin);
   }
 
 
@@ -21,24 +15,25 @@ class DrawHandler {
       return;
     }
 
-    const game = DrawHandler._getGame(req);
+    DrawHandler._getGame(req)
+    .then( (game) => {
+      if(!game){
+        res.send({ status: "Game does not exist" });
+        return;
+      }
 
-    if(!game){
-      res.send({ status: "Game does not exist" });
-      return;
-    }
-
-    game.addDrawing({
-      playerId: req.body.playerId,
-      round: req.body.round,
-      imageString: req.body.image
-    })
-    .then( () => {
-      res.send(JSON.stringify({ status: "success" }));
-    })
-    .catch( (err) => {
-      res.status(500).send({ status: "Something went wrong" });
-    })
+      game.addDrawing({
+        playerId: req.body.playerId,
+        round: req.body.round,
+        imageString: req.body.image
+      })
+      .then( () => {
+        res.send(JSON.stringify({ status: "success" }));
+      })
+      .catch( (err) => {
+        res.status(500).send({ status: "Something went wrong" });
+      })
+    });
 
   }
 

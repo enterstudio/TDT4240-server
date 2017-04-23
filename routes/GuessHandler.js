@@ -1,14 +1,11 @@
 'use strict'
 
+const Game = require('../Models/game.js');
+
 class GuessHandler {
 
-  static _setGames(games){
-    GuessHandler.games = games;
-  }
-
-
   static _getGame(request){
-    return GuessHandler.games[request.body.gamePin];
+    return Game.getGame(request.body.gamePin);
   }
 
 
@@ -18,15 +15,18 @@ class GuessHandler {
       return;
     }
 
-    const game = GuessHandler.games[req.params.gamePin];
-    if(!game){
-      res.status(404).send("Game does not exist");
-      return;
-    };
+    GuessHandler._getGame()
+    .then( (game) => {
+      if(!game){
+        res.status(404).send("Game does not exist");
+        return;
+      };
 
-    game.getGuess({
-      playerId: req.query.playerid,
-      round: req.query.round
+      game.getGuess({
+        playerId: req.query.playerid,
+        round: req.query.round
+      });
+
     });
   }
 
