@@ -25,6 +25,11 @@ WordRepository.getAllWords()
 class Game {
 
   constructor(handler){
+    /* Empty constructor for  */
+    if(!handler){
+      return;
+    }
+
     this.createGame(handler);
     this.players = [0]
     this.roundType = roundTypes.DRAWING;
@@ -48,7 +53,6 @@ class Game {
         return err;
       };
       console.log('Game created...');
-      successHandler(gamePin);
       this.gamePin = gamePin;
 
       selectedWords = EVERY_WORD.slice(0);
@@ -60,11 +64,17 @@ class Game {
 
       this.guessBlocks.push([]);
 
+      this._save(this)
+      .then( () => {
+        successHandler(gamePin);
+      });
+
     });
   }
 
    startGame(){
       this.isStarted = true;
+      this._save();
    }
 
   _updateIfAllGuessesReceived(){
@@ -100,8 +110,11 @@ class Game {
       this.guessBlocks[guessBlockIndex][this.guessBlocksDepth].guesserId = playerId;
       this._incrementGuessBlocksDepth();
       this._updateIfAllGuessesReceived();
-      resolve();
-    })
+      this._save()
+      .then( () => {
+        resolve();
+      });
+    });
   }
 
 
@@ -123,8 +136,8 @@ class Game {
          this.guessBlocks[guessBlockIndex][this.guessBlocksDepth].drawingId = id;
          this.guessBlocks[guessBlockIndex][this.guessBlocksDepth].drawerId = playerId;
          this._updateIfAllGuessesReceived();
+         return this._save();
       });
-        // TODO: Save game object to database
   }
 
 
@@ -163,7 +176,11 @@ class Game {
     //this.guessBlocks.push([{ guesserId: null, guess: null, drawerId: null, drawingId: null}]);
     this.guessBlocks.push([]);
 
-    GameRepository.addPlayer({ gamePin: this.gamePin, players: this.players.join(",") }, successHandler);
+    this._save()
+    .then( () => {
+      successHandler();
+    });
+
   }
 
 
@@ -176,8 +193,12 @@ class Game {
          console.log("scores: ", scores);
          this.scoresReceived += 1;
          this._updateIfAllScoresReceived();
-         resolve(this.scores);
-      })
+         this._save()
+         .then( () => {
+            resolve(this.scores);
+         });
+      });
+
    }
 
 
@@ -186,6 +207,21 @@ class Game {
     if (index != -1){
       this.players.splice(index, 1);
     }
+
+    this._save();
+  }
+
+  static getGame(gamePin){
+    assert.ok(gamePin, "Need gamePin to get game");
+
+    const game = new Game();
+    return GameRepository.getGame(gamePin, game)
+  }
+
+  _save(){
+    return (() => {
+      return GameRepository.save(this);
+    })();
   }
 
 }

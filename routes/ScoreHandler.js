@@ -1,13 +1,10 @@
 'use strict';
+const Game = require('../Models/game.js');
 
 class ScoreHandler {
 
-  static _setGames(games){
-    ScoreHandler.games = games;
-  }
-
   static _getGame(request){
-    return ScoreHandler.games[request.body.gamePin];
+    return Game.getGame(request.body.gamePin);
   }
 
 
@@ -17,16 +14,19 @@ class ScoreHandler {
       return;
     }
 
-    const game = ScoreHandler._getGame(req);
-    if(!game){
-      res.status(404).send("Game does not exist");
-      return;
-    }
+    ScoreHandler._getGame(req)
+    .then( (game) => {
+      if(!game){
+        res.status(404).send("Game does not exist");
+        return;
+      }
 
-    game.addScore({ scores: req.body.scores })
-      .then( (scores) => {
-        res.send({ status: "success", scores });
-      });
+      game.addScore({ scores: req.body.scores })
+        .then( (scores) => {
+          res.send({ status: "success", scores });
+        });
+    });
+
   }
 
 }
