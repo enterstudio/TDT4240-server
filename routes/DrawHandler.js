@@ -1,4 +1,5 @@
 const Game = require('../Models/game.js');
+const DrawRepository = require('../repository/drawRepository.js');
 
 class DrawHandler {
 
